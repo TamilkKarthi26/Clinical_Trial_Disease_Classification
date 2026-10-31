@@ -84,44 +84,39 @@ st.markdown(
 )
 
 # -----------------------------
-# # -----------------------------
-# Clinical Trial Summary Dropdown
+
+# -----------------------------
+# Keyword-Based Disease Prediction
 # -----------------------------
 
-# Create short preview for dropdown
-df["summary_preview"] = (
-    df["brief_summary"]
-    .astype(str)
-    .str[:100] + "..."
+st.subheader("Enter Clinical Trial Keywords")
+
+user_input = st.text_area(
+    "Enter medical keywords or a short clinical description",
+    placeholder="Example: breast lump, tumor, chemotherapy, cancer treatment",
+    height=150
 )
 
-selected_preview = st.selectbox(
-    "Select a Clinical Trial Summary",
-    df["summary_preview"]
-)
-
-selected_summary = df.loc[
-    df["summary_preview"] == selected_preview,
-    "brief_summary"
-].iloc[0]
-
-st.subheader("Selected Clinical Trial Summary")
-st.info(selected_summary)
-
-# -----------------------------
-# Prediction
-# -----------------------------
 if st.button("🔍 Predict Disease"):
 
-    cleaned_text = clean_text(selected_summary)
+    if user_input.strip():
 
-    vectorized_text = vectorizer.transform([cleaned_text])
+        cleaned_text = clean_text(user_input)
 
-    prediction = model.predict(vectorized_text)
+        vectorized_text = vectorizer.transform(
+            [cleaned_text]
+        )
 
-    st.success(
-    f"🎯 Predicted Disease Category: {prediction[0]}"
-)
+        prediction = model.predict(vectorized_text)
+
+        st.success(
+            f"Predicted Disease Category: {prediction[0]}"
+        )
+
+    else:
+        st.warning("Please enter some medical keywords.")
+
+
 
 # -----------------------------
 # Dataset Information
